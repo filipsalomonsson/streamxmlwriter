@@ -35,7 +35,7 @@ class XMLWriter(object):
     def start(self, tag, attributes=None):
         self.write("<" + tag)
         if attributes is not None:
-            for name, value in attributes.items():
+            for name, value in sorted(attributes.items()):
                 self.write(" " + name + "=\"" + value + "\"")
         self.write(">")
         self._tags.append(tag)
@@ -74,6 +74,15 @@ class XMLWriterTestCase(unittest.TestCase):
         writer.start("foo", {"bar": "baz"})
         writer.end()
         self.assertEqual(out.getvalue(), "<foo bar=\"baz\"></foo>")
+
+    def testSortedAttributes(self):
+        out = StringIO()
+        writer = XMLWriter(out)
+        writer.start("foo", {"bar": "bar", "baz": "baz"})
+        writer.end()
+        self.assertEqual(out.getvalue(),
+                         "<foo bar=\"bar\" baz=\"baz\"></foo>")
+
 
 if __name__ == "__main__":
     unittest.main()

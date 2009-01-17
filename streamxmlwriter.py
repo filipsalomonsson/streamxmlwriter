@@ -31,21 +31,31 @@ class XMLWriter(object):
     def __init__(self, file):
         self.write = file.write
         self._tags = []
+        self._start_tag_open = False
     
     def start(self, tag, attributes=None):
         self.write("<" + tag)
         if attributes is not None:
             for name, value in sorted(attributes.items()):
                 self.write(" " + name + "=\"" + value + "\"")
-        self.write(">")
+        self._start_tag_open = True
         self._tags.append(tag)
 
     def end(self):
         tag = self._tags.pop()
-        self.write("</" + tag + ">")
+        if self._start_tag_open:
+            self.write(" />")
+        else:
+            self.write("</" + tag + ">")
 
     def data(self, data):
+        self._close_start()
         self.write(data)
+
+    def _close_start(self):
+        if self._start_tag_open:
+            self.write(">")
+        self._start_tag_open = False
 
 
 class XMLWriterTestCase(unittest.TestCase):
@@ -58,7 +68,7 @@ class XMLWriterTestCase(unittest.TestCase):
         writer = XMLWriter(out)
         writer.start("foo")
         writer.end()
-        self.assertEqual(out.getvalue(), "<foo></foo>")
+        self.assertEqual(out.getvalue(), "<foo />")
 
     def testTextData(self):
         out = StringIO()
@@ -73,7 +83,7 @@ class XMLWriterTestCase(unittest.TestCase):
         writer = XMLWriter(out)
         writer.start("foo", {"bar": "baz"})
         writer.end()
-        self.assertEqual(out.getvalue(), "<foo bar=\"baz\"></foo>")
+        self.assertEqual(out.getvalue(), "<foo bar=\"baz\" />")
 
     def testSortedAttributes(self):
         out = StringIO()
@@ -81,7 +91,7 @@ class XMLWriterTestCase(unittest.TestCase):
         writer.start("foo", {"bar": "bar", "baz": "baz"})
         writer.end()
         self.assertEqual(out.getvalue(),
-                         "<foo bar=\"bar\" baz=\"baz\"></foo>")
+                         "<foo bar=\"bar\" baz=\"baz\" />")
 
 
 if __name__ == "__main__":

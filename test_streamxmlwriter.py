@@ -74,6 +74,25 @@ class XMLWriterTestCase(unittest.TestCase):
         writer.end()
         self.assertEqual(out.getvalue(), "<foo>&lt;&gt;&amp;</foo>")
 
+    def testFileEncoding(self):
+        out1, out2, out3, out4 = StringIO(), StringIO(), StringIO(), StringIO()
+        writer1 = XMLWriter(out1)
+        writer2 = XMLWriter(out2, encoding="us-ascii")
+        writer3 = XMLWriter(out3, encoding="iso-8859-1")
+        writer4 = XMLWriter(out4, encoding="utf-8")
+        for writer in (writer1, writer2, writer3, writer4):
+            writer.start("foo")
+            writer.data(u"\xe5\xe4\xf6\u2603\u2764")
+            writer.end()
+        self.assertEqual(out1.getvalue(),
+                         "<foo>&#229;&#228;&#246;&#9731;&#10084;</foo>")
+        self.assertEqual(out2.getvalue(),
+                         "<foo>&#229;&#228;&#246;&#9731;&#10084;</foo>")
+        self.assertEqual(out3.getvalue(),
+                         "<?xml version='1.0' encoding='iso-8859-1'?>" \
+                         "<foo>\xe5\xe4\xf6&#9731;&#10084;</foo>")
+        self.assertEqual(out4.getvalue(),
+                         "<foo>\xc3\xa5\xc3\xa4\xc3\xb6\xe2\x98\x83\xe2\x9d\xa4</foo>")
 
 if __name__ == "__main__":
     unittest.main()

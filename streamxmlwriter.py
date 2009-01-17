@@ -23,32 +23,36 @@
 
 __author__ = "Filip Salomonsson <filip.salomonsson@gmail.com>"
 
-def escape_attribute(value):
+def escape_attribute(value, encoding):
     value = value.replace("&", "&amp;")
     value = value.replace("<", "&lt;")
     value = value.replace(">", "&gt;")
     value = value.replace("\"", "&quot;")
-    return value
+    return value.encode(encoding, "xmlcharrefreplace")
 
-def escape_cdata(data):
+def escape_cdata(data, encoding):
     data = data.replace("&", "&amp;")
     data = data.replace("<", "&lt;")
     data = data.replace(">", "&gt;")
-    return data
+    return data.encode(encoding, "xmlcharrefreplace")
 
 
 class XMLWriter(object):
     """Stream XML writer"""
-    def __init__(self, file):
+    def __init__(self, file, encoding="us-ascii"):
         self.write = file.write
+        self.encoding = encoding
         self._tags = []
         self._start_tag_open = False
+        self.declaration()
     
     def start(self, tag, attributes=None):
         self.write("<" + tag)
         if attributes is not None:
             for name, value in sorted(attributes.items()):
-                self.write(" " + name + "=\"" + escape_attribute(value) + "\"")
+                self.write(" " + name + "=\""
+                           + escape_attribute(value, self.encoding)
+                           + "\"")
         self._start_tag_open = True
         self._tags.append(tag)
 
@@ -61,10 +65,13 @@ class XMLWriter(object):
 
     def data(self, data):
         self._close_start()
-        self.write(escape_cdata(data))
+        self.write(escape_cdata(data, self.encoding))
 
     def _close_start(self):
         if self._start_tag_open:
             self.write(">")
         self._start_tag_open = False
 
+    def declaration(self):
+        if self.encoding not in ("us-ascii", "utf-8"):
+            self.write("<?xml version='1.0' encoding='" + self.encoding + "'?>")

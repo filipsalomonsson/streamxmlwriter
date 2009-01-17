@@ -26,8 +26,29 @@ import unittest
 __author__ = "Filip Salomonsson <filip.salomonsson@gmail.com>"
 
 
+class XMLWriter(object):
+    """Stream XML writer"""
+    def __init__(self, file):
+        self.file = file
+        self._tags = []
+    
+    def start(self, tag):
+        self.file.write("<" + tag + ">")
+        self._tags.append(tag)
+
+    def end(self):
+        tag = self._tags.pop()
+        self.file.write("</" + tag + ">")
+
+
 class XMLWriterTestCase(unittest.TestCase):
-    pass
+    def testSingleElement(self):
+        from cStringIO import StringIO
+        out = StringIO()
+        writer = XMLWriter(out)
+        writer.start("foo")
+        writer.end()
+        self.assertEqual(out.getvalue(), "<foo></foo>")
 
 if __name__ == "__main__":
     unittest.main()

@@ -29,16 +29,16 @@ __author__ = "Filip Salomonsson <filip.salomonsson@gmail.com>"
 class XMLWriter(object):
     """Stream XML writer"""
     def __init__(self, file):
-        self.file = file
+        self.write = file.write
         self._tags = []
     
     def start(self, tag):
-        self.file.write("<" + tag + ">")
+        self.write("<" + tag + ">")
         self._tags.append(tag)
 
     def end(self):
         tag = self._tags.pop()
-        self.file.write("</" + tag + ">")
+        self.write("</" + tag + ">")
 
 
 class XMLWriterTestCase(unittest.TestCase):

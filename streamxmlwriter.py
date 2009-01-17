@@ -40,6 +40,9 @@ class XMLWriter(object):
         tag = self._tags.pop()
         self.write("</" + tag + ">")
 
+    def data(self, data):
+        self.write(data)
+
 
 class XMLWriterTestCase(unittest.TestCase):
     def setUp(self):
@@ -52,6 +55,14 @@ class XMLWriterTestCase(unittest.TestCase):
         writer.start("foo")
         writer.end()
         self.assertEqual(out.getvalue(), "<foo></foo>")
+
+    def testTextData(self):
+        out = StringIO()
+        writer = XMLWriter(out)
+        writer.start("foo")
+        writer.data("bar")
+        writer.end()
+        self.assertEqual(out.getvalue(), "<foo>bar</foo>")
 
 if __name__ == "__main__":
     unittest.main()

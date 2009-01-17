@@ -42,8 +42,11 @@ class XMLWriter(object):
 
 
 class XMLWriterTestCase(unittest.TestCase):
-    def testSingleElement(self):
+    def setUp(self):
+        global StringIO
         from cStringIO import StringIO
+
+    def testSingleElement(self):
         out = StringIO()
         writer = XMLWriter(out)
         writer.start("foo")

@@ -25,6 +25,12 @@ import unittest
 
 __author__ = "Filip Salomonsson <filip.salomonsson@gmail.com>"
 
+def escape_attribute(value):
+    value = value.replace("&", "&amp;")
+    value = value.replace("<", "&lt;")
+    value = value.replace(">", "&gt;")
+    value = value.replace("\"", "&quot;")
+    return value
 
 class XMLWriter(object):
     """Stream XML writer"""
@@ -37,7 +43,7 @@ class XMLWriter(object):
         self.write("<" + tag)
         if attributes is not None:
             for name, value in sorted(attributes.items()):
-                self.write(" " + name + "=\"" + value + "\"")
+                self.write(" " + name + "=\"" + escape_attribute(value) + "\"")
         self._start_tag_open = True
         self._tags.append(tag)
 
@@ -92,6 +98,13 @@ class XMLWriterTestCase(unittest.TestCase):
         writer.end()
         self.assertEqual(out.getvalue(),
                          "<foo bar=\"bar\" baz=\"baz\" />")
+
+    def testEscapeAttributes(self):
+        out = StringIO()
+        writer = XMLWriter(out)
+        writer.start("foo", {"bar": "<>&\""})
+        writer.end()
+        self.assertEqual(out.getvalue(), "<foo bar=\"&lt;&gt;&amp;&quot;\" />")
 
 
 if __name__ == "__main__":

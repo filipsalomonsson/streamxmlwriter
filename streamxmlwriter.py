@@ -32,6 +32,13 @@ def escape_attribute(value):
     value = value.replace("\"", "&quot;")
     return value
 
+def escape_cdata(data):
+    data = data.replace("&", "&amp;")
+    data = data.replace("<", "&lt;")
+    data = data.replace(">", "&gt;")
+    return data
+
+
 class XMLWriter(object):
     """Stream XML writer"""
     def __init__(self, file):
@@ -56,7 +63,7 @@ class XMLWriter(object):
 
     def data(self, data):
         self._close_start()
-        self.write(data)
+        self.write(escape_cdata(data))
 
     def _close_start(self):
         if self._start_tag_open:
@@ -105,6 +112,14 @@ class XMLWriterTestCase(unittest.TestCase):
         writer.start("foo", {"bar": "<>&\""})
         writer.end()
         self.assertEqual(out.getvalue(), "<foo bar=\"&lt;&gt;&amp;&quot;\" />")
+
+    def testEscapeCharacterData(self):
+        out = StringIO()
+        writer = XMLWriter(out)
+        writer.start("foo")
+        writer.data("<>&")
+        writer.end()
+        self.assertEqual(out.getvalue(), "<foo>&lt;&gt;&amp;</foo>")
 
 
 if __name__ == "__main__":

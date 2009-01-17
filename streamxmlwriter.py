@@ -21,8 +21,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-import unittest
-
 __author__ = "Filip Salomonsson <filip.salomonsson@gmail.com>"
 
 def escape_attribute(value):
@@ -70,57 +68,3 @@ class XMLWriter(object):
             self.write(">")
         self._start_tag_open = False
 
-
-class XMLWriterTestCase(unittest.TestCase):
-    def setUp(self):
-        global StringIO
-        from cStringIO import StringIO
-
-    def testSingleElement(self):
-        out = StringIO()
-        writer = XMLWriter(out)
-        writer.start("foo")
-        writer.end()
-        self.assertEqual(out.getvalue(), "<foo />")
-
-    def testTextData(self):
-        out = StringIO()
-        writer = XMLWriter(out)
-        writer.start("foo")
-        writer.data("bar")
-        writer.end()
-        self.assertEqual(out.getvalue(), "<foo>bar</foo>")
-
-    def testSingleAttribute(self):
-        out = StringIO()
-        writer = XMLWriter(out)
-        writer.start("foo", {"bar": "baz"})
-        writer.end()
-        self.assertEqual(out.getvalue(), "<foo bar=\"baz\" />")
-
-    def testSortedAttributes(self):
-        out = StringIO()
-        writer = XMLWriter(out)
-        writer.start("foo", {"bar": "bar", "baz": "baz"})
-        writer.end()
-        self.assertEqual(out.getvalue(),
-                         "<foo bar=\"bar\" baz=\"baz\" />")
-
-    def testEscapeAttributes(self):
-        out = StringIO()
-        writer = XMLWriter(out)
-        writer.start("foo", {"bar": "<>&\""})
-        writer.end()
-        self.assertEqual(out.getvalue(), "<foo bar=\"&lt;&gt;&amp;&quot;\" />")
-
-    def testEscapeCharacterData(self):
-        out = StringIO()
-        writer = XMLWriter(out)
-        writer.start("foo")
-        writer.data("<>&")
-        writer.end()
-        self.assertEqual(out.getvalue(), "<foo>&lt;&gt;&amp;</foo>")
-
-
-if __name__ == "__main__":
-    unittest.main()

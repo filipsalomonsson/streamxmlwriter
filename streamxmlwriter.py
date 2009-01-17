@@ -32,8 +32,12 @@ class XMLWriter(object):
         self.write = file.write
         self._tags = []
     
-    def start(self, tag):
-        self.write("<" + tag + ">")
+    def start(self, tag, attributes=None):
+        self.write("<" + tag)
+        if attributes is not None:
+            for name, value in attributes.items():
+                self.write(" " + name + "=\"" + value + "\"")
+        self.write(">")
         self._tags.append(tag)
 
     def end(self):
@@ -63,6 +67,13 @@ class XMLWriterTestCase(unittest.TestCase):
         writer.data("bar")
         writer.end()
         self.assertEqual(out.getvalue(), "<foo>bar</foo>")
+
+    def testSingleAttribute(self):
+        out = StringIO()
+        writer = XMLWriter(out)
+        writer.start("foo", {"bar": "baz"})
+        writer.end()
+        self.assertEqual(out.getvalue(), "<foo bar=\"baz\"></foo>")
 
 if __name__ == "__main__":
     unittest.main()

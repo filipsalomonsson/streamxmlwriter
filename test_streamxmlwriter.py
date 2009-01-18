@@ -87,5 +87,13 @@ class XMLWriterTestCase(unittest.TestCase):
         self.assertEqual(out4.getvalue(),
                          "<foo>\xc3\xa5\xc3\xa4\xc3\xb6\xe2\x98\x83\xe2\x9d\xa4</foo>")
 
+    def testClose(self):
+        w, out = self.writer_and_output()
+        w.start("a")
+        w.start("b")
+        w.close()
+        self.assertEqual(out.getvalue(), "<a><b /></a>")
+
+
 if __name__ == "__main__":
     unittest.main()

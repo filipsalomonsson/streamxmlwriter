@@ -47,6 +47,7 @@ class XMLWriter(object):
         self.declaration()
     
     def start(self, tag, attributes=None):
+        self._close_start()
         self.write("<" + tag)
         if attributes is not None:
             for name, value in sorted(attributes.items()):
@@ -60,6 +61,7 @@ class XMLWriter(object):
         tag = self._tags.pop()
         if self._start_tag_open:
             self.write(" />")
+            self._start_tag_open = False
         else:
             self.write("</" + tag + ">")
 
@@ -75,3 +77,7 @@ class XMLWriter(object):
     def declaration(self):
         if self.encoding not in ("us-ascii", "utf-8"):
             self.write("<?xml version='1.0' encoding='" + self.encoding + "'?>")
+
+    def close(self):
+        while self._tags:
+            self.end()

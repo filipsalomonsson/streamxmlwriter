@@ -94,6 +94,19 @@ class XMLWriterTestCase(unittest.TestCase):
         w.close()
         self.assertEqual(out.getvalue(), "<a><b /></a>")
 
+    def testPrettyPrint(self):
+        w, out = self.writer_and_output(pretty_print=True)
+        w.start("a")
+        w.start("b")
+        w.data("foo")
+        w.end()
+        w.start("b")
+        w.data("bar")
+        w.end()
+        w.start("b")
+        w.start("c")
+        w.close()
+        self.assertEqual(out.getvalue(), "<a>\n  <b>foo</b>\n  <b>bar</b>\n  <b>\n    <c />\n  </b>\n</a>")
 
 if __name__ == "__main__":
     unittest.main()

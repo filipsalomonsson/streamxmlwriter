@@ -59,7 +59,7 @@ class XMLWriterTestCase(unittest.TestCase):
         w, out = self.writer_and_output()
         w.start("foo", {"bar": "<>&\""})
         w.end()
-        self.assertEqual(out.getvalue(), "<foo bar=\"&lt;&gt;&amp;&quot;\" />")
+        self.assertEqual(out.getvalue(), "<foo bar=\"&lt;>&amp;&quot;\" />")
 
     def testEscapeCharacterData(self):
         w, out = self.writer_and_output()

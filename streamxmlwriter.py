@@ -28,7 +28,6 @@ INDENT = "  "
 def escape_attribute(value, encoding):
     value = value.replace("&", "&amp;")
     value = value.replace("<", "&lt;")
-    value = value.replace(">", "&gt;")
     value = value.replace("\"", "&quot;")
     return value.encode(encoding, "xmlcharrefreplace")
 

@@ -37,13 +37,32 @@ def escape_cdata(data, encoding):
     data = data.replace(">", "&gt;")
     return data.encode(encoding, "xmlcharrefreplace")
 
+def sorter_factory(d):
+    attrib_order = {}
+    for tag, names in attrib_order.iteritems():
+        attrib_order[tag] = dict((name, n) for (n, name) in enumerate(names))
+    def asort(pairs, tag):
+        def key(a):
+            name, value = a
+            keys = attrib_order.get(tag, {})
+            if name in keys:
+                return keys.get(name), name
+            else:
+                return keys.get(None, len(keys)), name
+        return sorted(pairs, key=key)
+    return asort
+
 
 class XMLWriter(object):
     """Stream XML writer"""
-    def __init__(self, file, encoding="us-ascii", pretty_print=False):
+    def __init__(self, file, encoding="us-ascii",
+                 pretty_print=False, sort=True):
         self.write = file.write
         self.encoding = encoding
         self._pretty_print = pretty_print
+        self._sort = sort
+        if isinstance(sort, dict):
+            self._sort = sorted_factory(sort)
         self._tags = []
         self._start_tag_open = False
         self.declaration()
@@ -53,11 +72,17 @@ class XMLWriter(object):
         if self._pretty_print and self._tags and not self._wrote_data:
             self.write("\n" + INDENT * len(self._tags))
         self.write("<" + tag)
-        if attributes is not None:
-            for name, value in sorted(attributes.items()):
-                self.write(" " + name + "=\""
-                           + escape_attribute(value, self.encoding)
-                           + "\"")
+        if attributes:
+            attributes = attributes.items()
+            if self._sort:
+                if callable(self._sort):
+                    attributes = self._sort(attributes, tag)
+                else:
+                    attributes = sorted(attributes)
+                for name, value in attributes:
+                    self.write(" " + name + "=\""
+                               + escape_attribute(value, self.encoding)
+                               + "\"")
         self._start_tag_open = True
         self._wrote_data = False
         self._tags.append(tag)

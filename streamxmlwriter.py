@@ -70,13 +70,14 @@ class XMLWriter(object):
         self._start_tag_open = False
         self.declaration()
     
-    def start(self, tag, attributes=None):
+    def start(self, tag, attributes=None, **kwargs):
         self._close_start()
         if self._pretty_print and self._tags and not self._wrote_data:
             self.write("\n" + INDENT * len(self._tags))
         self.write("<" + tag)
-        if attributes:
-            attributes = attributes.items()
+        if attributes or kwargs:
+            if attributes is None: attributes={}
+            attributes = attributes.items() + kwargs.items()
             if self._sort:
                 if callable(self._sort):
                     attributes = self._sort(attributes, tag)

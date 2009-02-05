@@ -22,6 +22,8 @@
 # THE SOFTWARE.
 
 __author__ = "Filip Salomonsson <filip.salomonsson@gmail.com>"
+__version__ = "1.0 pre-alpha"
+
 
 INDENT = "  "
 

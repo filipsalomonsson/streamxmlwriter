@@ -70,7 +70,8 @@ class XMLWriter(object):
             self._sort = sorter_factory(sort)
         self._tags = []
         self._start_tag_open = False
-        self.declaration()
+        if self.encoding not in ("us-ascii", "utf-8"):
+            self.declaration()
     
     def start(self, tag, attributes=None, **kwargs):
         self._close_start()
@@ -124,8 +125,7 @@ class XMLWriter(object):
         self._start_tag_open = False
 
     def declaration(self):
-        if self.encoding not in ("us-ascii", "utf-8"):
-            self.write("<?xml version='1.0' encoding='" + self.encoding + "'?>")
+        self.write("<?xml version='1.0' encoding='" + self.encoding + "'?>")
 
     def close(self):
         while self._tags:

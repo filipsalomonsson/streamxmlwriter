@@ -52,6 +52,10 @@ def sorter_factory(attrib_order):
     return asort
 
 
+class XMLSyntaxError(Exception):
+    pass
+
+
 class XMLWriter(object):
     """Stream XML writer"""
     def __init__(self, file, encoding="us-ascii",
@@ -86,15 +90,18 @@ class XMLWriter(object):
         self._wrote_data = False
         self._tags.append(tag)
 
-    def end(self):
-        tag = self._tags.pop()
+    def end(self, tag=None):
+        open_tag = self._tags.pop()
+        if tag is not None and open_tag != tag:
+            raise XMLSyntaxError("Start and end tag mismatch: %s and /%s."
+                                 % (open_tag, tag))
         if self._start_tag_open:
             self.write(" />")
             self._start_tag_open = False
         else:
             if self._pretty_print and not self._wrote_data:
                 self.write("\n" + INDENT * len(self._tags))
-            self.write("</" + tag + ">")
+            self.write("</" + open_tag + ">")
         self._wrote_data = False
 
     def data(self, data):

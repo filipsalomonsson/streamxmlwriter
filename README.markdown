@@ -2,9 +2,10 @@ Streamxmlwriter
 ===============
 
 Streamxmlwriter is a simple python library for writing XML files. It
-is intended as a mostly drop-in replacement for the SimpleXMLWriter
-that is included in the ElementTree package, but also supports
-pretty-printing and custom element attribute ordering.
+is very similar to the SimpleXMLWriter that is included in Fredrik
+Lundh's ElementTree package, but also supports pretty-printing and
+custom element attribute ordering.
+
 
 Usage example
 -------------
@@ -26,18 +27,19 @@ Usage example
 The API
 -------
 
-### `w = XMLWriter(file, encoding="utf-8", pretty_print=False, sort=True)`
-creates a new writer object. Pass it a file-like object, which is what
-it will write to. As long as there is a `write` method, you whould be
-fine. There are a few optional arguments you can pass to the
-constructor:
+### `writer = XMLWriter(file, encoding="utf-8", pretty_print=False, sort=True)`
 
-* `encoding` specifies the encoding for your XML file. Default: `"utf-8"`.
-* `pretty_print` specifies whether to generate pretty-printed
-  (indented) XML output. Default: `False`.
-* `sort` specifies whether to sort every element's attributes by name.
-  If `True`, attributes are lexicographically sorted. See "Attribute
-  ordering" below for more advanced options. Default: `True`.
+creates a new writer instance that writes its output to the file-like
+object you pass as the first argument. There are a few optional
+arguments as well:
+
+* `encoding` specifies the character encoding for the XML output.
+  Default: `"utf-8"`.
+* If `pretty_print` is `True`, the XML output will be pretty-printed
+  (indented). Default: `False`.
+* If `sort` is `True`, every element's attributes will be
+  lexicographically sorted by name. See "Attribute ordering" below for
+  more advanced options. Default: `True`.
 
 ### `writer.start(tag, attributes=None, **kwargs)`
 opens an element whose tag is `tag`. To specify attributes, you can
@@ -61,13 +63,15 @@ is exactly the same as calling `start("foo", bar="baz")`,
 outputs an XML declaration. If the character encoding is not
 `us-ascii` or `utf-8`, it is called automatically by the constructor.
 
+### `writer.close()
+Closes all open elements.
+
 
 Attribute ordering
 ------------------
 
-The smoothest way to get element attributes ordered in the way you
-want is to pass a dictionary to the constructor's `sort` argument. In
-that dictionary:
+For more control over attribute ordering, you can pass a dictionary to
+the constructor's `sort` argument. In that dictionary:
 
 * each key is a tag name, and
 * each corresponding value is a list of attribute names in the order
@@ -87,6 +91,7 @@ Todo
 * Add PI support
 * Add namespace support
 * C14N
+* Additional safeguards against generating bad XML?
 
 
 License

@@ -110,6 +110,12 @@ class XMLWriter(object):
         self.write(escape_cdata(data, self.encoding))
         self._wrote_data = True
 
+    def element(self, tag, attributes=None, data=None, **kwargs):
+        self.start(tag, attributes, **kwargs)
+        if data:
+            self.data(data)
+        self.end(tag)
+
     def _close_start(self):
         if self._start_tag_open:
             self.write(">")

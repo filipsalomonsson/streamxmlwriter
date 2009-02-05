@@ -37,8 +37,7 @@ def escape_cdata(data, encoding):
     data = data.replace(">", "&gt;")
     return data.encode(encoding, "xmlcharrefreplace")
 
-def sorter_factory(d):
-    attrib_order = {}
+def sorter_factory(attrib_order):
     for tag, names in attrib_order.iteritems():
         attrib_order[tag] = dict((name, n) for (n, name) in enumerate(names))
     def asort(pairs, tag):
@@ -62,7 +61,7 @@ class XMLWriter(object):
         self._pretty_print = pretty_print
         self._sort = sort
         if isinstance(sort, dict):
-            self._sort = sorted_factory(sort)
+            self._sort = sorter_factory(sort)
         self._tags = []
         self._start_tag_open = False
         self.declaration()

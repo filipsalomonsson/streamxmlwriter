@@ -78,7 +78,7 @@ class XMLWriterTestCase(unittest.TestCase):
             w.data(u"\xe5\xe4\xf6\u2603\u2764")
             w.end()
         self.assertEqual(out1.getvalue(),
-                         "<foo>&#229;&#228;&#246;&#9731;&#10084;</foo>")
+                         "<foo>\xc3\xa5\xc3\xa4\xc3\xb6\xe2\x98\x83\xe2\x9d\xa4</foo>")
         self.assertEqual(out2.getvalue(),
                          "<foo>&#229;&#228;&#246;&#9731;&#10084;</foo>")
         self.assertEqual(out3.getvalue(),

@@ -60,7 +60,7 @@ class XMLSyntaxError(Exception):
 
 class XMLWriter(object):
     """Stream XML writer"""
-    def __init__(self, file, encoding="us-ascii",
+    def __init__(self, file, encoding="utf-8",
                  pretty_print=False, sort=True):
         self.write = file.write
         self.encoding = encoding

@@ -165,6 +165,7 @@ class XMLWriter(object):
 
     def declaration(self):
         self.write("<?xml version='1.0' encoding='" + self.encoding + "'?>")
+    xml = declaration
 
     def close(self):
         while self._tags:

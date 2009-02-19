@@ -167,6 +167,10 @@ class XMLWriter(object):
         self.write("<?xml version='1.0' encoding='" + self.encoding + "'?>")
     xml = declaration
 
+    def comment(self, data):
+        self._close_start()
+        self.write("<!-- " + escape_cdata(data, self._encoding) + " -->")
+
     def close(self):
         while self._tags:
             self.end()

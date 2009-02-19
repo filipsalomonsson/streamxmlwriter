@@ -79,10 +79,12 @@ class XMLWriter(object):
         if self.encoding not in ("us-ascii", "utf-8"):
             self.declaration()
     
-    def start(self, tag, attributes=None, **kwargs):
+    def start(self, tag, attributes=None, nsmap={}, **kwargs):
         self._close_start()
         if self._pretty_print and self._tags and not self._wrote_data:
             self.write("\n" + INDENT * len(self._tags))
+        for (prefix, uri) in nsmap:
+            self.start_ns(prefix, uri)
         if tag[0] == "{":
             uri, tag = tag[1:].split("}", 1)
             nsmap = self._namespace_maps[-1]

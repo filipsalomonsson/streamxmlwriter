@@ -27,7 +27,7 @@ Usage example
 The API
 -------
 
-### `writer = XMLWriter(file, encoding="utf-8", pretty_print=False, sort=True)`
+### writer = XMLWriter(file, encoding="utf-8", pretty_print=False, sort=True)
 
 creates a new writer instance that writes its output to the file-like
 object you pass as the first argument. There are a few optional
@@ -41,29 +41,29 @@ arguments as well:
   lexicographically sorted by name. See "Attribute ordering" below for
   more advanced options. Default: `True`.
 
-### `writer.start(tag, attributes=None, **kwargs)`
+### writer.start(tag, attributes=None, **kwargs)
 opens an element whose tag is `tag`. To specify attributes, you can
 pass it a dictionary as the second argument. In most cases, it's
 easier to specify each attribute as a keyword argument.
 
-### `writer.end(tag)`
+### writer.end(tag)
 closes the most recently opened element. If you pass it a `tag` that
 doesn't match the open element, the writer raises an `XMLSyntaxError`.
 If you don't pass any tag at all, the current element is closed.
 
-### `writer.data(data)`
+### writer.data(data)
 writes character data to the output file, properly encoded.
 
-### `writer.element(tag, attributes=None, data=None, **kwargs)`
+### writer.element(tag, attributes=None, data=None, **kwargs)
 writes a complete element. `element("foo", bar="baz", data="hello!")`
 is exactly the same as calling `start("foo", bar="baz")`,
 `data("hello!")` and `end("foo")`.
 
-### `writer.declaration()`
+### writer.declaration()
 outputs an XML declaration. If the character encoding is not
 `us-ascii` or `utf-8`, it is called automatically by the constructor.
 
-### `writer.close()
+### writer.close()
 Closes all open elements.
 
 

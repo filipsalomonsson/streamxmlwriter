@@ -1,6 +1,14 @@
 #!/usr/bin/env python
-"""Stream XML Writer module"""
+"""streamxmlwriter - A simple library for incrementally writing XML
+files of arbitrary size. Supports pretty-printing and custom attribute
+ordering. Experimental namespace support.
 
+In early development; poor documentation and tests; may eat your
+children. The latest development version is available from the git
+repository: http://github.com/infixfilip/streamxmlwriter/tree/master
+
+Comments and/or patches are always welcome.
+"""
 # Copyright (c) 2009 Filip Salomonsson
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy

@@ -86,10 +86,9 @@ Todo
 ----
 
 * Avoid multiple XML declarations
-* Add comment support
 * Add PI support
-* Add namespace support
-* C14N
+* Make namespace support solid
+* C14N?
 * Additional safeguards against generating bad XML?
 
 

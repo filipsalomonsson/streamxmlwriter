@@ -98,7 +98,9 @@ class XMLWriter(object):
             self.declaration()
     
     def start(self, tag, attributes=None, nsmap={}, **kwargs):
-        self._close_start()
+        if self._start_tag_open:
+            self.write(">")
+            self._start_tag_open = False
         if self._pretty_print and self._tags and not self._wrote_data:
             self.write("\n" + INDENT * len(self._tags))
         for (prefix, uri) in nsmap:
@@ -168,7 +170,9 @@ class XMLWriter(object):
         del self._namespace_maps[-1]
 
     def data(self, data):
-        self._close_start()
+        if self._start_tag_open:
+            self.write(">")
+            self._start_tag_open = False
         self.write(escape_cdata(data, self.encoding))
         self._wrote_data = True
 

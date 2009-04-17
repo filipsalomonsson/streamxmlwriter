@@ -56,14 +56,18 @@ def escape_cdata(data, encoding):
 def sorter_factory(attrib_order):
     for tag, names in attrib_order.iteritems():
         attrib_order[tag] = dict((name, n) for (n, name) in enumerate(names))
+    for tag, order in attrib_order.iteritems():
+        order[None] = len(order)
     def asort(pairs, tag):
         def key(a):
             name, value = a
-            keys = attrib_order.get(tag, {})
+            if tag not in attrib_order:
+                return name
+            keys = attrib_order[tag]
             if name in keys:
-                return keys.get(name), name
+                return keys[name], name
             else:
-                return keys.get(None, len(keys)), name
+                return keys[None], name
         return sorted(pairs, key=key)
     return asort
 

@@ -193,14 +193,11 @@ class XMLWriter(object):
 
     def comment(self, data):
         self._close_start()
-        self.write("<!-- " + escape_cdata(data, self._encoding) + " -->")
+        self.write("<!-- " + escape_cdata(data, self.encoding) + " -->")
 
     def pi(self, target, data):
         self._close_start()
         self.write("<?" + target + " " + data + "?>")
-
-    def comment(self, data):
-        self.write("<!-- " + escape_cdata(data, self.encoding) + " -->")
 
     def close(self):
         while self._tags:

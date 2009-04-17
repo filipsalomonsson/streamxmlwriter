@@ -36,15 +36,21 @@ __version__ = "0.1"
 INDENT = "  "
 
 def escape_attribute(value, encoding):
-    value = value.replace("&", "&amp;")
-    value = value.replace("<", "&lt;")
-    value = value.replace("\"", "&quot;")
+    if "&" in value:
+        value = value.replace("&", "&amp;")
+    if "<" in value:
+        value = value.replace("<", "&lt;")
+    if "\"" in value:
+        value = value.replace("\"", "&quot;")
     return value.encode(encoding, "xmlcharrefreplace")
 
 def escape_cdata(data, encoding):
-    data = data.replace("&", "&amp;")
-    data = data.replace("<", "&lt;")
-    data = data.replace(">", "&gt;")
+    if "&" in data:
+        data = data.replace("&", "&amp;")
+    if "<" in data:
+        data = data.replace("<", "&lt;")
+    if ">" in data:
+        data = data.replace(">", "&gt;")
     return data.encode(encoding, "xmlcharrefreplace")
 
 def sorter_factory(attrib_order):

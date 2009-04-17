@@ -118,10 +118,10 @@ class XMLWriter(object):
                     attributes = self._sort(attributes, tag)
                 else:
                     attributes = sorted(attributes)
-                for name, value in attributes:
-                    self.write(" " + name + "=\""
-                               + escape_attribute(value, self.encoding)
-                               + "\"")
+            for name, value in attributes:
+                self.write(" " + name + "=\""
+                           + escape_attribute(value, self.encoding)
+                           + "\"")
         self._start_tag_open = True
         self._wrote_data = False
         self._tags.append(tag)

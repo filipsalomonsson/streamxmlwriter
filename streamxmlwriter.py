@@ -178,11 +178,12 @@ class XMLWriter(object):
         del self._namespace_maps[-1]
 
     def data(self, data):
-        if self._start_tag_open:
-            self.write(">")
-            self._start_tag_open = False
-        self.write(escape_cdata(data, self.encoding))
-        self._wrote_data = True
+        if not (self._pretty_print and not data.strip()):
+            if self._start_tag_open:
+                self.write(">")
+                self._start_tag_open = False
+            self.write(escape_cdata(data, self.encoding))
+            self._wrote_data = True
 
     def element(self, element, attributes=None, data=None, **kwargs):
         if hasattr(element, "tag"):

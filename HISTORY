@@ -1,0 +1,26 @@
+Version 0.2 - 2009-05-10
+------------------------
+New features:
+* The element() method now supports Element instances.
+* Added tostring() utility function for serializing an Element
+  instance to a string.
+* Removed padding spaces in comments
+
+
+Enhancements:
+* Escaping/encoding of attribute values and character data is now
+  a lot faster than before
+* Attribute sorting also a lot faster
+* Additional minor speed improvements.
+
+Bug fixes:
+* The README, LICENSE and setup.py files were missing in version 0.1.
+* Fixed a bug that meant attributes were lost when attribute sorting
+  was turned off.
+* Removed broken duplicate declaration of the comment() method
+* Calling the data() method with whitespace-only data will now be
+  ignored if pretty_print=True
+
+Version 0.1 - 2009-03-02
+------------------------
+First public release.

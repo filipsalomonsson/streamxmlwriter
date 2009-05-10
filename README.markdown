@@ -54,10 +54,13 @@ If you don't pass any tag at all, the current element is closed.
 ### writer.data(data)
 writes character data to the output file, properly encoded.
 
-### writer.element(tag, attributes=None, data=None, **kwargs)
+### writer.element(element, attributes=None, data=None, **kwargs)
 writes a complete element. `element("foo", bar="baz", data="hello!")`
 is exactly the same as calling `start("foo", bar="baz")`,
 `data("hello!")` and `end("foo")`.
+
+If `element` is an Element instance, the whole element will be
+serialized, including children.
 
 ### writer.declaration()
 outputs an XML declaration. If the character encoding is not
@@ -87,7 +90,6 @@ Todo
 ----
 
 * Avoid multiple XML declarations
-* Add PI support
 * Make namespace support solid
 * C14N?
 * Additional safeguards against generating bad XML?

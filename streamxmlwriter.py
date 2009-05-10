@@ -71,6 +71,14 @@ def sorter_factory(attrib_order):
         return sorted(pairs, key=key)
     return asort
 
+def tostring(element, *args, **kwargs):
+    import cStringIO
+    out = cStringIO.StringIO()
+    writer = XMLWriter(out, *args, **kwargs)
+    writer.element(element)
+    writer.close()
+    return out.getvalue()
+
 
 class XMLSyntaxError(Exception):
     pass
@@ -176,11 +184,27 @@ class XMLWriter(object):
         self.write(escape_cdata(data, self.encoding))
         self._wrote_data = True
 
-    def element(self, tag, attributes=None, data=None, **kwargs):
-        self.start(tag, attributes, **kwargs)
-        if data:
-            self.data(data)
-        self.end(tag)
+    def element(self, element, attributes=None, data=None, **kwargs):
+        if hasattr(element, "tag"):
+            attrib = dict(element.attrib)
+            if attributes:
+                attrib.update(attributes)
+            self.start(element.tag, attrib, **kwargs)
+            if data is not None or element.text:
+                if data is not None:
+                    self.data(data)
+                else:
+                    self.data(element.text)
+            for child in element:
+                self.element(child)
+            self.end()
+            if element.tail:
+                self.data(element.tail)
+        else:
+            self.start(element, attributes, **kwargs)
+            if data:
+                self.data(data)
+            self.end(element)
 
     def _close_start(self):
         if self._start_tag_open:

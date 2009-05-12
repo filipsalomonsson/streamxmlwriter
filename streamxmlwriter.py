@@ -105,6 +105,19 @@ class XMLWriter(object):
         if self.encoding not in ("us-ascii", "utf-8"):
             self.declaration()
     
+    def _cname(self, name):
+        if name[0] == "{":
+            uri, name = name[1:].split("}", 1)
+            nsmap = self._namespace_maps[-1]
+            if uri not in nsmap:
+                prefix = "ns" + str(len(nsmap)+1)
+                self.start_ns(prefix, uri)
+            else:
+                prefix = nsmap[uri]
+            if prefix:
+                name = prefix + ":" + name
+        return name
+
     def start(self, tag, attributes=None, nsmap={}, **kwargs):
         if self._start_tag_open:
             self.write(">")
@@ -113,16 +126,7 @@ class XMLWriter(object):
             self.write("\n" + INDENT * len(self._tags))
         for (prefix, uri) in nsmap:
             self.start_ns(prefix, uri)
-        if tag[0] == "{":
-            uri, tag = tag[1:].split("}", 1)
-            nsmap = self._namespace_maps[-1]
-            if uri not in nsmap:
-                prefix = nsmap[uri] = "ns" + str(len(nsmap)+1)
-                self._new_namespaces.append((uri, prefix))
-            else:
-                prefix = nsmap[uri]
-            if prefix:
-                tag = prefix + ":" + tag
+        tag = self._cname(tag)
         self.write("<" + tag)
         if attributes or kwargs or self._new_namespaces:
             if attributes is None: attributes={}
@@ -149,13 +153,7 @@ class XMLWriter(object):
     def end(self, tag=None):
         open_tag = self._tags.pop()
         if tag is not None:
-            if tag[0] == "{":
-                uri, tag = tag[1:].split("}", 1)
-                nsmap = self._namespace_maps[-1]
-                if uri not in nsmap:
-                    nsmap[uri] = "ns" + str(len(nsmap)+1)
-                tag = nsmap[uri] + ":" + tag
-
+            tag = self._cname(tag)
             if open_tag != tag:
                 raise XMLSyntaxError("Start and end tag mismatch: %s and /%s."
                                      % (open_tag, tag))

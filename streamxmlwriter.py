@@ -143,6 +143,7 @@ class XMLWriter(object):
                 else:
                     attributes = sorted(attributes)
             for name, value in attributes:
+                name = self._cname(name)
                 self.write(" " + name + "=\""
                            + escape_attribute(value, self.encoding)
                            + "\"")

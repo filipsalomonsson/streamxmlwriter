@@ -119,6 +119,13 @@ class NamespaceTestCase(unittest.TestCase):
         self.assertEqual(out.getvalue(),
                          '<foo xmlns="http://example.org/ns" />')
 
+    def testAttribute(self):
+        w, out = writer_and_output()
+        w.start_ns("a", "http://example.org/ns")
+        w.start("foo", {"{http://example.org/ns}bar": "baz"})
+        w.close()
+        self.assertEqual(out.getvalue(),
+                         '<foo xmlns:a="http://example.org/ns" a:bar="baz" />')
 
 if __name__ == "__main__":
     unittest.main()

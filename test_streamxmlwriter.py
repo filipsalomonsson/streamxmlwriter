@@ -25,54 +25,55 @@ import unittest
 from cStringIO import StringIO
 from streamxmlwriter import *
 
-class XMLWriterTestCase(unittest.TestCase):
-    def writer_and_output(self, *args, **kwargs):
-        out = StringIO()
-        return XMLWriter(out, *args, **kwargs), out
+def writer_and_output(*args, **kwargs):
+    out = StringIO()
+    return XMLWriter(out, *args, **kwargs), out
 
+
+class XMLWriterTestCase(unittest.TestCase):
     def testSingleElement(self):
-        w, out = self.writer_and_output()
+        w, out = writer_and_output()
         w.start("foo")
         w.end()
         self.assertEqual(out.getvalue(), "<foo />")
 
     def testTextData(self):
-        w, out = self.writer_and_output()
+        w, out = writer_and_output()
         w.start("foo")
         w.data("bar")
         w.end()
         self.assertEqual(out.getvalue(), "<foo>bar</foo>")
 
     def testSingleAttribute(self):
-        w, out = self.writer_and_output()
+        w, out = writer_and_output()
         w.start("foo", {"bar": "baz"})
         w.end()
         self.assertEqual(out.getvalue(), "<foo bar=\"baz\" />")
 
     def testSortedAttributes(self):
-        w, out = self.writer_and_output()
+        w, out = writer_and_output()
         w.start("foo", {"bar": "bar", "baz": "baz"})
         w.end()
         self.assertEqual(out.getvalue(), "<foo bar=\"bar\" baz=\"baz\" />")
 
     def testEscapeAttributes(self):
-        w, out = self.writer_and_output()
+        w, out = writer_and_output()
         w.start("foo", {"bar": "<>&\""})
         w.end()
         self.assertEqual(out.getvalue(), "<foo bar=\"&lt;>&amp;&quot;\" />")
 
     def testEscapeCharacterData(self):
-        w, out = self.writer_and_output()
+        w, out = writer_and_output()
         w.start("foo")
         w.data("<>&")
         w.end()
         self.assertEqual(out.getvalue(), "<foo>&lt;&gt;&amp;</foo>")
 
     def testFileEncoding(self):
-        w1, out1 = self.writer_and_output()
-        w2, out2 = self.writer_and_output(encoding="us-ascii")
-        w3, out3 = self.writer_and_output(encoding="iso-8859-1")
-        w4, out4 = self.writer_and_output(encoding="utf-8")
+        w1, out1 = writer_and_output()
+        w2, out2 = writer_and_output(encoding="us-ascii")
+        w3, out3 = writer_and_output(encoding="iso-8859-1")
+        w4, out4 = writer_and_output(encoding="utf-8")
         for w in (w1, w2, w3, w4):
             w.start("foo")
             w.data(u"\xe5\xe4\xf6\u2603\u2764")
@@ -88,14 +89,14 @@ class XMLWriterTestCase(unittest.TestCase):
                          "<foo>\xc3\xa5\xc3\xa4\xc3\xb6\xe2\x98\x83\xe2\x9d\xa4</foo>")
 
     def testClose(self):
-        w, out = self.writer_and_output()
+        w, out = writer_and_output()
         w.start("a")
         w.start("b")
         w.close()
         self.assertEqual(out.getvalue(), "<a><b /></a>")
 
     def testPrettyPrint(self):
-        w, out = self.writer_and_output(pretty_print=True)
+        w, out = writer_and_output(pretty_print=True)
         w.start("a")
         w.start("b")
         w.data("foo")

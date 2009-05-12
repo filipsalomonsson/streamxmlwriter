@@ -127,5 +127,77 @@ class NamespaceTestCase(unittest.TestCase):
         self.assertEqual(out.getvalue(),
                          '<foo xmlns:a="http://example.org/ns" a:bar="baz" />')
 
+    def testPrefixedElement(self):
+        w, out = writer_and_output()
+        w.start_ns("a", "http://example.org/ns")
+        w.start("{http://example.org/ns}foo")
+        w.close()
+        self.assertEqual(out.getvalue(),
+                         '<a:foo xmlns:a="http://example.org/ns" />')
+
+    def testDefaultUnbinding(self):
+        w, out = writer_and_output()
+        w.start_ns("", "http://example.org/ns")
+        w.start("foo")
+        w.start_ns("", "")
+        w.start("foo")
+        w.close()
+        self.assertEqual(out.getvalue(),
+                         '<foo xmlns="http://example.org/ns">'
+                         '<foo xmlns="" /></foo>')
+
+    def testPrefixRebinding(self):
+        w, out = writer_and_output()
+        w.start_ns("a", "http://example.org/ns")
+        w.start("{http://example.org/ns}foo")
+        w.start_ns("a", "http://example.org/ns2")
+        w.start("{http://example.org/ns2}foo")
+        w.close()
+        self.assertEqual(out.getvalue(),
+                         '<a:foo xmlns:a="http://example.org/ns">'
+                         '<a:foo xmlns:a="http://example.org/ns2" />'
+                         '</a:foo>')
+
+    def testAttributesSameLocalName(self):
+        w, out = writer_and_output()
+        w.start_ns("a", "http://example.org/ns1")
+        w.start_ns("b", "http://example.org/ns2")
+        w.start("foo")
+        w.start("bar", {"{http://example.org/ns1}attr": "1",
+                        "{http://example.org/ns2}attr": "2"})
+        w.close()
+        self.assertEquals(out.getvalue(),
+                          '<foo xmlns:a="http://example.org/ns1"'
+                          ' xmlns:b="http://example.org/ns2">'
+                          '<bar a:attr="1" b:attr="2" />'
+                          '</foo>')
+
+    def testAttributesSameLocalOnePrefixed(self):
+        w, out = writer_and_output()
+        w.start_ns("a", "http://example.org/ns")
+        w.start("foo")
+        w.start("bar", {"{http://example.org/ns}attr": "1",
+                        "attr": "2"})
+        w.close()
+        self.assertEquals(out.getvalue(),
+                          '<foo xmlns:a="http://example.org/ns">'
+                          '<bar attr="2" a:attr="1" />'
+                          '</foo>')
+
+    def testAttributesSameLocalOnePrefixedOneDefault(self):
+        w, out = writer_and_output()
+        w.start_ns("", "http://example.org/ns1")
+        w.start_ns("a", "http://example.org/ns2")
+        w.start("foo")
+        w.start("bar", {"{http://example.org/ns1}attr": "1",
+                        "{http://example.org/ns2}attr": "2"})
+        w.close()
+        self.assertEquals(out.getvalue(),
+                          '<foo xmlns="http://example.org/ns1"'
+                          ' xmlns:a="http://example.org/ns2">'
+                          '<bar attr="1" a:attr="2" />'
+                          '</foo>')
+
+
 if __name__ == "__main__":
     unittest.main()

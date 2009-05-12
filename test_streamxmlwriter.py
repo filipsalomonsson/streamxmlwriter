@@ -109,5 +109,16 @@ class XMLWriterTestCase(unittest.TestCase):
         w.close()
         self.assertEqual(out.getvalue(), "<a>\n  <b>foo</b>\n  <b>bar</b>\n  <b>\n    <c />\n  </b>\n</a>")
 
+
+class NamespaceTestCase(unittest.TestCase):
+    def testSimple(self):
+        w, out = writer_and_output()
+        w.start_ns("", "http://example.org/ns")
+        w.start("{http://example.org/ns}foo")
+        w.close()
+        self.assertEqual(out.getvalue(),
+                         '<foo xmlns="http://example.org/ns" />')
+
+
 if __name__ == "__main__":
     unittest.main()

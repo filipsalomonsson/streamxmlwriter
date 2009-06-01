@@ -1,3 +1,14 @@
+Version 0.3 - 2009-06-01
+------------------------
+Enhancements:
+* Unit tests are now included in the package.
+* Added much needed docstrings and some comments to the code.
+
+Bug fixes:
+* Namespaced attributes weren't serialized correctly.
+* Fixed handling of nsmap, to retain namespace prefix mappings
+  when working with lxml trees.
+
 Version 0.2 - 2009-05-10
 ------------------------
 New features:

@@ -76,9 +76,9 @@ def sorter_factory(attrib_order):
     def asort(pairs, tag):
         """Sort a list of ``(key, value)`` pairs), using the custom
         sort order for the given `tag` name."""
-        def key(a):
-            # Sort key
-            name, value = a
+        def key(item):
+            """Return a sort key for a ``(key, value)`` pair."""
+            name, _ = item
             if tag not in attrib_order:
                 return name
             keys = attrib_order[tag]
@@ -113,7 +113,7 @@ class XMLSyntaxError(Exception):
 class XMLWriter(object):
     """Stream XML writer"""
     def __init__(self, file, encoding="utf-8",
-                 nsmap={}, default_namespace=None,
+                 nsmap=None, default_namespace=None,
                  pretty_print=False, sort=True):
         """
         Create an `XMLWriter` that writes its output to `file`.
@@ -148,6 +148,7 @@ class XMLWriter(object):
             self._sort = sorter_factory(sort)
         self._tags = []
         self._start_tag_open = False
+        nsmap = nsmap or {}
         nsmap = nsmap.copy()
         if default_namespace:
             nsmap[default_namespace] = ""
@@ -155,9 +156,10 @@ class XMLWriter(object):
         self._new_namespaces = nsmap.items()
         if self.encoding not in ("us-ascii", "utf-8"):
             self.declaration()
+        self._wrote_data = False
 
     def _cname(self, name):
-        # Return a cname from its {ns}tag form
+        """Return a cname from its {ns}tag form."""
         if name[0] == "{":
             uri, name = name[1:].split("}", 1)
             nsmap = self._namespace_maps[-1]
@@ -170,7 +172,7 @@ class XMLWriter(object):
                 name = prefix + ":" + name
         return name
 
-    def start(self, tag, attributes=None, nsmap={}, **kwargs):
+    def start(self, tag, attributes=None, nsmap=None, **kwargs):
         """Open a new `tag` element.
 
         Attributes can be given as a dictionary (`attributes`), or as
@@ -183,16 +185,17 @@ class XMLWriter(object):
         if self._pretty_print and self._tags and not self._wrote_data:
             self.write("\n" + INDENT * len(self._tags))
         # Generate start-ns events for all new namespaces
-        for (prefix, uri) in nsmap.iteritems():
-            if self._namespace_maps[-1].get(uri) != prefix:
-                self.start_ns(prefix, uri)
+        if nsmap is not None:
+            for (prefix, uri) in nsmap.iteritems():
+                if self._namespace_maps[-1].get(uri) != prefix:
+                    self.start_ns(prefix, uri)
         tag = self._cname(tag)
         self.write("<" + tag)
         # Write attributes, including namespace declarations
         # TODO: Handle ns declarations separately
         if attributes or kwargs or self._new_namespaces:
             if attributes is None:
-                attributes={}
+                attributes = {}
             else:
                 attributes = dict(attributes)
             for (uri, prefix) in self._new_namespaces:
@@ -203,11 +206,10 @@ class XMLWriter(object):
             self._new_namespaces = []
             attributes = attributes.items() + kwargs.items()
             # Sort them, if requested
-            if self._sort:
-                if callable(self._sort):
-                    attributes = self._sort(attributes, tag)
-                else:
-                    attributes = sorted(attributes)
+            if callable(self._sort):
+                attributes = self._sort(attributes, tag)
+            elif self._sort:
+                attributes = sorted(attributes)
             # Do the actual writing
             for name, value in attributes:
                 name = self._cname(name)
@@ -290,7 +292,7 @@ class XMLWriter(object):
             self.end(element)
 
     def _close_start(self):
-        # Make sure the start tag is finished
+        """Make sure the start tag is finished."""
         if self._start_tag_open:
             self.write(">")
         self._start_tag_open = False

@@ -129,8 +129,9 @@ class XMLWriter(object):
             self._start_tag_open = False
         if self._pretty_print and self._tags and not self._wrote_data:
             self.write("\n" + INDENT * len(self._tags))
-        for (prefix, uri) in nsmap:
-            self.start_ns(prefix, uri)
+        for (prefix, uri) in nsmap.iteritems():
+            if self._namespace_maps[-1].get(uri) != prefix:
+                self.start_ns(prefix, uri)
         tag = self._cname(tag)
         self.write("<" + tag)
         if attributes or kwargs or self._new_namespaces:
@@ -197,7 +198,10 @@ class XMLWriter(object):
             attrib = dict(element.attrib)
             if attributes:
                 attrib.update(attributes)
-            self.start(element.tag, attrib, **kwargs)
+            if hasattr(element, "nsmap"):
+                self.start(element.tag, attrib, element.nsmap, **kwargs)
+            else:
+                self.start(element.tag, attrib, **kwargs)
             if data is not None or element.text:
                 if data is not None:
                     self.data(data)

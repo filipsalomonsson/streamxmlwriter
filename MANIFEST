@@ -3,3 +3,4 @@ LICENSE
 README.markdown
 setup.py
 streamxmlwriter.py
+test/test_streamxmlwriter.py

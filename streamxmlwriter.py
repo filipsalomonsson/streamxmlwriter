@@ -10,17 +10,17 @@ repository: http://github.com/infixfilip/streamxmlwriter/tree/master
 Comments and/or patches are always welcome.
 """
 # Copyright (c) 2009 Filip Salomonsson
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -35,6 +35,7 @@ __version__ = "0.2"
 
 INDENT = "  "
 
+
 def escape_attribute(value, encoding):
     if "&" in value:
         value = value.replace("&", "&amp;")
@@ -43,6 +44,7 @@ def escape_attribute(value, encoding):
     if "\"" in value:
         value = value.replace("\"", "&quot;")
     return value.encode(encoding, "xmlcharrefreplace")
+
 
 def escape_cdata(data, encoding):
     if "&" in data:
@@ -53,11 +55,13 @@ def escape_cdata(data, encoding):
         data = data.replace(">", "&gt;")
     return data.encode(encoding, "xmlcharrefreplace")
 
+
 def sorter_factory(attrib_order):
     for tag, names in attrib_order.iteritems():
         attrib_order[tag] = dict((name, n) for (n, name) in enumerate(names))
     for tag, order in attrib_order.iteritems():
         order[None] = len(order)
+
     def asort(pairs, tag):
         def key(a):
             name, value = a
@@ -70,6 +74,7 @@ def sorter_factory(attrib_order):
                 return keys[None], name
         return sorted(pairs, key=key)
     return asort
+
 
 def tostring(element, *args, **kwargs):
     import cStringIO
@@ -104,7 +109,7 @@ class XMLWriter(object):
         self._new_namespaces = nsmap.items()
         if self.encoding not in ("us-ascii", "utf-8"):
             self.declaration()
-    
+
     def _cname(self, name):
         if name[0] == "{":
             uri, name = name[1:].split("}", 1)
@@ -129,7 +134,10 @@ class XMLWriter(object):
         tag = self._cname(tag)
         self.write("<" + tag)
         if attributes or kwargs or self._new_namespaces:
-            if attributes is None: attributes={}
+            if attributes is None:
+                attributes={}
+            else:
+                attributes = dict(attributes)
             for (uri, prefix) in self._new_namespaces:
                 if prefix:
                     attributes["xmlns:" + prefix] = uri

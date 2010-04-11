@@ -138,7 +138,7 @@ class NamespaceTestCase(unittest.TestCase):
     def testDefaultUnbinding(self):
         w, out = writer_and_output()
         w.start_ns("", "http://example.org/ns")
-        w.start("foo")
+        w.start("{http://example.org/ns}foo")
         w.start_ns("", "")
         w.start("foo")
         w.close()
@@ -188,9 +188,10 @@ class NamespaceTestCase(unittest.TestCase):
         w, out = writer_and_output()
         w.start_ns("", "http://example.org/ns1")
         w.start_ns("a", "http://example.org/ns2")
-        w.start("foo")
-        w.start("bar", {"{http://example.org/ns1}attr": "1",
-                        "{http://example.org/ns2}attr": "2"})
+        w.start("{http://example.org/ns1}foo")
+        w.start("{http://example.org/ns1}bar",
+                {"{http://example.org/ns1}attr": "1",
+                 "{http://example.org/ns2}attr": "2"})
         w.close()
         self.assertEquals(out.getvalue(),
                           '<foo xmlns="http://example.org/ns1"'

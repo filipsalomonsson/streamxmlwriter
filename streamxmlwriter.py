@@ -185,6 +185,8 @@ class XMLWriter(object):
         Attributes can be given as a dictionary (`attributes`), or as
         keyword arguments.
 
+        `nsmap` is an optional dictionary mapping namespace prefixes
+        to URIs. It is intended mainly for lxml compatibility.
         """
         self._started = True
         if self._start_tag_open:

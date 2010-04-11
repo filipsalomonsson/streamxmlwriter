@@ -176,7 +176,7 @@ class XMLWriter(object):
             cname = prefix + ":" + ncname
         else:
             cname = ncname
-        cnames[name] = cname
+        cnames[name] = cname, (uri, ncname)
         return cname, (uri, ncname)
 
     def start(self, tag, attributes=None, nsmap=None, **kwargs):
@@ -256,7 +256,7 @@ class XMLWriter(object):
         """
         open_tag, namespaces, cnames = self._tags.pop()
         if tag is not None:
-            tag , _= self._cname(tag, namespaces, cnames)
+            tag, _ = self._cname(tag, namespaces, cnames)
             if open_tag != tag:
                 raise XMLSyntaxError("Start and end tag mismatch: %s and /%s."
                                      % (open_tag, tag))

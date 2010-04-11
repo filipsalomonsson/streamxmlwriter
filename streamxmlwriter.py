@@ -312,7 +312,7 @@ class XMLWriter(object):
 
     def declaration(self):
         """Write an XML declaration."""
-        self.write("<?xml version='1.0' encoding='" + self.encoding + "'?>")
+        self.pi("xml", "version='1.0' encoding='" + self.encoding + "'")
     xml = declaration
 
     def comment(self, data):

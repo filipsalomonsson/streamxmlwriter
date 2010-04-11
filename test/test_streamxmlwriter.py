@@ -299,6 +299,19 @@ class IterwriteTestCase(unittest.TestCase):
         w.close()
         self.assertEqual(out.getvalue(), xml)
 
+    def testChunkedText(self):
+        from lxml import etree
+        from cStringIO import StringIO
+        for padding in (16382, 32755):
+            padding = " " * padding
+            w, out = writer_and_output()
+            xml = "%s<doc><foo>hello</foo></doc>" % padding
+            events = ("start", "end")
+            w.iterwrite(etree.iterparse(StringIO(xml), events))
+            w.close()
+            self.assertEqual(out.getvalue(), xml.strip())
+
+
 # from lxml import etree
 # 
 # rmt = etree.parse("test/xmlconf/eduni/namespaces/1.0/rmt-ns10.xml")

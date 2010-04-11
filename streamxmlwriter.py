@@ -357,7 +357,7 @@ class XMLWriter(object):
             self.end()
 
     def iterwrite(self, events):
-        for event, elem in events:
+        for event, elem in delayed_iterator(events):
             if event == "start-ns":
                 self.start_ns(*elem)
             elif event == "end-ns":
@@ -380,3 +380,11 @@ class XMLWriter(object):
                     self.data(elem.tail)
                 elem.clear()
 
+
+def delayed_iterator(iterable):
+    iterable = iter(iterable)
+    previous = iterable.next()
+    for item in iterable:
+        yield previous
+        previous = item
+    yield previous

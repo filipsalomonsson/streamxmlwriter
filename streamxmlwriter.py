@@ -113,7 +113,7 @@ class XMLSyntaxError(Exception):
 class XMLWriter(object):
     """Stream XML writer"""
     def __init__(self, file, encoding="utf-8",
-                 pretty_print=False, sort=True):
+                 pretty_print=False, sort=True, abbrev_empty=True):
         """
         Create an `XMLWriter` that writes its output to `file`.
 
@@ -143,6 +143,7 @@ class XMLWriter(object):
         self.encoding = encoding
         self._pretty_print = pretty_print
         self._sort = sort
+        self._abbrev_empty = abbrev_empty
         if isinstance(sort, dict):
             self._sort = sorter_factory(sort)
         self._tags = []
@@ -253,10 +254,11 @@ class XMLWriter(object):
             if open_tag != tag:
                 raise XMLSyntaxError("Start and end tag mismatch: %s and /%s."
                                      % (open_tag, tag))
-        # Use the short form for empty elements
-        # TODO: make this configurable
         if self._start_tag_open:
-            self.write(" />")
+            if self._abbrev_empty:
+                self.write(" />")
+            else:
+                self.write("></" + open_tag + ">")
             self._start_tag_open = False
         else:
             if self._pretty_print and not self._wrote_data:

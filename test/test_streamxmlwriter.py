@@ -108,6 +108,12 @@ class XMLWriterTestCase(unittest.TestCase):
         self.assertEqual(out.getvalue(),
                          "<?xml version='1.0' encoding='utf-8'?>")
 
+    def testAbbrevEmpty(self):
+        w, out = writer_and_output(abbrev_empty=False)
+        w.start("a")
+        w.close()
+        self.assertEqual(out.getvalue(), "<a></a>")
+
 
 class PrettyPrintTestCase(unittest.TestCase):
     def testSimple(self):

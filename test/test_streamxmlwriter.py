@@ -95,7 +95,22 @@ class XMLWriterTestCase(unittest.TestCase):
         w.close()
         self.assertEqual(out.getvalue(), "<a><b /></a>")
 
-    def testPrettyPrint(self):
+    def testDeclarationLateDeclarationRaisesSyntaxError(self):
+        w, out = writer_and_output()
+        w.start("a")
+        self.assertRaises(XMLSyntaxError, w.declaration)
+
+    def testIgnoreDoubleDeclaration(self):
+        w, out = writer_and_output()
+        w.declaration()
+        w.declaration()
+        w.close()
+        self.assertEqual(out.getvalue(),
+                         "<?xml version='1.0' encoding='utf-8'?>")
+
+
+class PrettyPrintTestCase(unittest.TestCase):
+    def testSimple(self):
         w, out = writer_and_output(pretty_print=True)
         w.start("a")
         w.start("b")
@@ -109,18 +124,58 @@ class XMLWriterTestCase(unittest.TestCase):
         w.close()
         self.assertEqual(out.getvalue(), "<a>\n  <b>foo</b>\n  <b>bar</b>\n  <b>\n    <c />\n  </b>\n</a>")
 
-    def testDeclarationLateDeclarationRaisesSyntaxError(self):
-        w, out = writer_and_output()
+    def testComment(self):
+        w, out = writer_and_output(pretty_print=True)
         w.start("a")
-        self.assertRaises(XMLSyntaxError, w.declaration)
-
-    def testIgnoreDoubleDeclaration(self):
-        w, out = writer_and_output()
-        w.declaration()
-        w.declaration()
+        w.comment("comment")
+        w.start("b")
         w.close()
         self.assertEqual(out.getvalue(),
-                         "<?xml version='1.0' encoding='utf-8'?>")
+                         "<a>\n  <!--comment-->\n  <b />\n</a>")
+
+    def testCommentBeforeRoot(self):
+        w, out = writer_and_output(pretty_print=True)
+        w.comment("comment")
+        w.start("a")
+        w.close()
+        self.assertEqual(out.getvalue(),
+                         "<!--comment-->\n<a />")
+
+    def testCommentAfterRoot(self):
+        w, out = writer_and_output(pretty_print=True)
+        w.start("a")
+        w.end()
+        w.comment("comment")
+        w.close()
+        self.assertEqual(out.getvalue(),
+                         "<a />\n<!--comment-->")
+
+    def testPI(self):
+        w, out = writer_and_output(pretty_print=True)
+        w.start("a")
+        w.pi("foo", "bar")
+        w.start("b")
+        w.close()
+        self.assertEqual(out.getvalue(),
+                         "<a>\n  <?foo bar?>\n  <b />\n</a>")
+
+    def testPIBeforeRoot(self):
+        w, out = writer_and_output(pretty_print=True)
+        w.pi("foo", "bar")
+        w.start("a")
+        w.close()
+        self.assertEqual(out.getvalue(),
+                         "<?foo bar?>\n<a />")
+
+    def testPIAfterRoot(self):
+        w, out = writer_and_output(pretty_print=True)
+        w.start("a")
+        w.end()
+        w.pi("foo", "bar")
+        w.close()
+        self.assertEqual(out.getvalue(),
+                         "<a />\n<?foo bar?>")
+
 
 class NamespaceTestCase(unittest.TestCase):
     def testSimple(self):

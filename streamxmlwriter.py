@@ -323,15 +323,25 @@ class XMLWriter(object):
             self._wrote_declaration = True
     xml = declaration
 
+    def _comment_or_pi(self, data):
+        """Write a comment or PI, using special rules for
+        pretty-printing."""
+        self._close_start()
+        if self._pretty_print:
+            if ((self._tags and not self._wrote_data) or
+                (self._started and not self._tags)):
+                self.write("\n" + INDENT * len(self._tags))
+        self.write(data)
+        if self._pretty_print and not self._started:
+            self.write("\n")
+
     def comment(self, data):
         """Add an XML comment."""
-        self._close_start()
-        self.write("<!--" + escape_cdata(data, self.encoding) + "-->")
+        self._comment_or_pi("<!--" + escape_cdata(data, self.encoding) + "-->")
 
     def pi(self, target, data):
         """Add an XML processing instruction."""
-        self._close_start()
-        self.write("<?" + target + " " + data + "?>")
+        self._comment_or_pi("<?" + target + " " + data + "?>")
 
     def close(self):
         """Close all open elements."""

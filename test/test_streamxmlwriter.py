@@ -280,6 +280,25 @@ class NamespaceTestCase(unittest.TestCase):
                           '</foo>')
 
 
+class IterwriteTestCase(unittest.TestCase):
+    def testBasic(self):
+        from lxml import etree
+        from cStringIO import StringIO
+        w, out = writer_and_output()
+        xml = """\
+<!--comment before--><?pi before?><foo xmlns="http://example.org/ns1">
+  <?a pi?>
+  <bar xmlns:b="http://example.org/ns2">
+    <?pi inside?>some text
+    <baz attr="1" b:attr="2" />
+    oh dear<!--comment inside -->text here too
+  </bar>
+</foo><?pi after?><!--comment after-->"""
+        events = ("start", "end", "start-ns", "end-ns", "pi", "comment")
+        w.iterwrite(etree.iterparse(StringIO(xml), events))
+        w.close()
+        self.assertEqual(out.getvalue(), xml)
+
 # from lxml import etree
 # 
 # rmt = etree.parse("test/xmlconf/eduni/namespaces/1.0/rmt-ns10.xml")

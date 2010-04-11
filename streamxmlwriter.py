@@ -355,3 +355,28 @@ class XMLWriter(object):
         """Close all open elements."""
         while self._tags:
             self.end()
+
+    def iterwrite(self, events):
+        for event, elem in events:
+            if event == "start-ns":
+                self.start_ns(*elem)
+            elif event == "end-ns":
+                self.end_ns()
+            elif event == "comment":
+                self.comment(elem.text)
+                if elem.tail:
+                    self.data(elem.tail)
+            elif event == "pi":
+                self.pi(elem.target, elem.text)
+                if elem.tail:
+                    self.data(elem.tail)
+            elif event == "start":
+                self.start(elem.tag, dict(elem.attrib))
+                if elem.text:
+                    self.data(elem.text)
+            elif event == "end":
+                self.end(elem.tag)
+                if elem.tail:
+                    self.data(elem.tail)
+                elem.clear()
+

@@ -160,7 +160,12 @@ class XMLWriter(object):
         if name in cnames:
             return cnames[name]
         if not name[0] == "{":
-            name = "{}" + name
+            for uri in nsmap:
+                if not nsmap[uri]:
+                    break
+            else:
+                uri = ""
+            name = "{" + uri + "}" + name
         uri, ncname = name[1:].split("}", 1)
         if uri not in nsmap:
             prefix = "ns" + str(len(nsmap)+1)
@@ -192,7 +197,7 @@ class XMLWriter(object):
         if self._tags:
             _, old_namespaces, _ = self._tags[-1]
         else:
-            old_namespaces = {'': ''}
+            old_namespaces = {'': None}
         namespaces = old_namespaces.copy()
         if nsmap:
             self._new_namespaces.update(nsmap)
@@ -216,8 +221,9 @@ class XMLWriter(object):
                              for (name, value) in kwargs.iteritems()])
 
         # Write namespace declarations for all new mappings
-        for (uri, prefix) in sorted(namespaces.iteritems()):
-            if old_namespaces.get(uri) != prefix:
+        for (uri, prefix) in sorted(namespaces.iteritems(),
+                                    key=lambda x: x[1]):
+            if uri not in old_namespaces or old_namespaces.get(uri) != prefix:
                 if prefix:
                     self.write(" xmlns:" + prefix + "=\""
                                + escape_attribute(uri, self.encoding)
@@ -237,6 +243,7 @@ class XMLWriter(object):
                        + escape_attribute(value, self.encoding)
                        + "\"")
 
+        self._new_namespaces = {}
         self._start_tag_open = True
         self._wrote_data = False
         self._tags.append((tag, namespaces, cnames))

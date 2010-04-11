@@ -115,6 +115,13 @@ class XMLWriterTestCase(unittest.TestCase):
         self.assertEqual(out.getvalue(), "<a></a>")
 
 
+    def testNamedEnd(self):
+        w, out = writer_and_output()
+        w.start("a")
+        w.end("a")
+        w.close()
+        self.assertTrue(True)
+
 class PrettyPrintTestCase(unittest.TestCase):
     def testSimple(self):
         w, out = writer_and_output(pretty_print=True)

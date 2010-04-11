@@ -86,14 +86,6 @@ attribute names can be used as a place marker for all attributes whose
 names are not in the list; by default, they will be placed last.
 
 
-Todo
-----
-
-* Make namespace support solid
-* C14N?
-* Additional safeguards against generating bad XML?
-
-
 License
 -------
 

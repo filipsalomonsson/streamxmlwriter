@@ -200,8 +200,7 @@ class XMLWriter(object):
             old_namespaces = {'': None}
         namespaces = old_namespaces.copy()
         if nsmap:
-            self._new_namespaces.update(nsmap)
-
+            self._new_namespaces.update(reversed(item) for item in nsmap.iteritems())
         values = self._new_namespaces.values()
         for uri, prefix in namespaces.items():
             if prefix in values:

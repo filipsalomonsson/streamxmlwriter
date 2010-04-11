@@ -89,7 +89,6 @@ names are not in the list; by default, they will be placed last.
 Todo
 ----
 
-* Avoid multiple XML declarations
 * Make namespace support solid
 * C14N?
 * Additional safeguards against generating bad XML?

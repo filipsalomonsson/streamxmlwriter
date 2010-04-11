@@ -109,6 +109,18 @@ class XMLWriterTestCase(unittest.TestCase):
         w.close()
         self.assertEqual(out.getvalue(), "<a>\n  <b>foo</b>\n  <b>bar</b>\n  <b>\n    <c />\n  </b>\n</a>")
 
+    def testDeclarationLateDeclarationRaisesSyntaxError(self):
+        w, out = writer_and_output()
+        w.start("a")
+        self.assertRaises(XMLSyntaxError, w.declaration)
+
+    def testIgnoreDoubleDeclaration(self):
+        w, out = writer_and_output()
+        w.declaration()
+        w.declaration()
+        w.close()
+        self.assertEqual(out.getvalue(),
+                         "<?xml version='1.0' encoding='utf-8'?>")
 
 class NamespaceTestCase(unittest.TestCase):
     def testSimple(self):

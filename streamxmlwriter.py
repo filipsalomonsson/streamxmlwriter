@@ -148,6 +148,8 @@ class XMLWriter(object):
         self._tags = []
         self._start_tag_open = False
         self._new_namespaces = {}
+        self._started = False
+        self._wrote_declaration = False
         if self.encoding not in ("us-ascii", "utf-8"):
             self.declaration()
         self._wrote_data = False
@@ -178,6 +180,7 @@ class XMLWriter(object):
         keyword arguments.
 
         """
+        self._started = True
         if self._start_tag_open:
             self.write(">")
             self._start_tag_open = False
@@ -312,7 +315,12 @@ class XMLWriter(object):
 
     def declaration(self):
         """Write an XML declaration."""
-        self.pi("xml", "version='1.0' encoding='" + self.encoding + "'")
+        if self._started:
+            raise XMLSyntaxError("Can't write XML declaration after"
+                                 " root element has been started.")
+        if not self._wrote_declaration:
+            self.pi("xml", "version='1.0' encoding='" + self.encoding + "'")
+            self._wrote_declaration = True
     xml = declaration
 
     def comment(self, data):

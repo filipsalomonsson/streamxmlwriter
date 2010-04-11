@@ -1,3 +1,17 @@
+Version 0.4 - IN DEVELOPMENT
+------------------------
+Enhancements:
+* Nicer pretty-printing of comments and PIs before and after the root
+  element.
+* Repeat calls to declaration() are now silently ignored.
+* Namespace scope is now handled automatically, so you no longer need
+  to call end_ns() yourself (it's now a no-op), which makes it harder
+  to screw up.
+
+Bug fixes:
+* XMLSyntaxError is now raised when declaration() is called too late,
+  instead of writing an illegal declaration in the document.
+
 Version 0.3 - 2009-06-01
 ------------------------
 Enhancements:

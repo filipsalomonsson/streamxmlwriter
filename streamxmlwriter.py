@@ -166,6 +166,7 @@ class XMLWriter(object):
         }
 
         """
+        self.file = file
         self.write = file.write
         self.encoding = encoding
         self._pretty_print = pretty_print

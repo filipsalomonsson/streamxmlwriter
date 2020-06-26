@@ -14,8 +14,8 @@ attributes.
 Usage example
 -------------
 
-    >>> from cStringIO import StringIO
-    >>> output = StringIO()
+    >>> from io import BytesIO
+    >>> output = BytesIO()
 
     >>> from streamxmlwriter import XMLWriter
     >>> writer = XMLWriter(output, pretty_print=True)
@@ -30,13 +30,8 @@ Usage example
     >>> writer.start("empty")
     >>> writer.close()
 
-    >>> print output.getvalue()
-    <foo xmlns:a="http://example.org/ns" two="2" a:one="1">
-      <bar>something</bar>
-      <!--hello-->
-      <a:baz x="y">whatnot</a:baz>
-      <empty />
-    </foo>
+    >>> output.getvalue()
+    b'<foo xmlns:a="http://example.org/ns" two="2" a:one="1">\n  <bar>something</bar>\n  <!--hello-->\n  <a:baz x="y">whatnot</a:baz>\n  <empty />\n</foo>'
 
 
 The API

@@ -7,7 +7,7 @@ ordering. Experimental namespace support.
 In development; poor documentation and tests; may eat your children.
 The latest development version is available from the git repository [1].
 
-[1] http://github.com/infixfilip/streamxmlwriter
+[1] http://github.com/filipsalomonsson/streamxmlwriter
 
 Comments and/or patches are always welcome.
 """

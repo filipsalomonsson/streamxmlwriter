@@ -20,7 +20,7 @@ setup(name="streamxmlwriter",
         ],
       author="Filip Salomonsson",
       author_email="filip.salomonsson@gmail.com",
-      url="http://github.com/infixfilip/streamxmlwriter/tree/master",
+      url="http://github.com/filipsalomonsson/streamxmlwriter/tree/master",
       py_modules=["streamxmlwriter"],
       license="MIT",
       )

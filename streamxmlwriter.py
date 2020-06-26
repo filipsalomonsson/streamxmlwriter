@@ -96,8 +96,10 @@ def sorter_factory(attrib_order):
     class.
 
     """
-    attrib_order = attrib_order.copy()
-    for tag, names in attrib_order.iteritems():
+    items = attrib_order.items()
+    attrib_order = {}
+    for tag, names in items:
+        tag = _nssplitname(tag)
         attrib_order[tag] = dict([(_nssplitname(name), n)
                                   for (n, name) in enumerate(names)])
     for tag, order in attrib_order.iteritems():
@@ -218,8 +220,8 @@ class XMLWriter(object):
         cnames = {}
 
         # Write tag name (cname)
-        tag = _cname(tag, namespaces, cnames)
-        self.write("<" + tag)
+        tag = _nssplitname(tag)
+        self.write("<" + _cname(tag, namespaces, cnames))
 
         # Make cnames for the attributes
         if attributes:
@@ -260,7 +262,7 @@ class XMLWriter(object):
         """
         open_tag, namespaces, cnames = self._tags.pop()
         if tag is not None:
-            tag = _cname(tag, namespaces, cnames)
+            tag = _nssplitname(tag)
             if open_tag != tag:
                 raise XMLSyntaxError("Start and end tag mismatch: %s and /%s."
                                      % (open_tag, tag))
@@ -268,12 +270,12 @@ class XMLWriter(object):
             if self._abbrev_empty:
                 self.write(" />")
             else:
-                self.write("></" + open_tag + ">")
+                self.write("></" + _cname(open_tag, namespaces, cnames) + ">")
             self._start_tag_open = False
         else:
             if self._pretty_print and not self._wrote_data:
                 self.write("\n" + INDENT * len(self._tags))
-            self.write("</" + open_tag + ">")
+            self.write("</" + _cname(open_tag, namespaces, cnames) + ">")
         self._wrote_data = False
 
     def start_ns(self, prefix, uri):

@@ -32,7 +32,7 @@ Comments and/or patches are always welcome.
 # THE SOFTWARE.
 
 __author__ = "Filip Salomonsson <filip.salomonsson@gmail.com>"
-__version__ = "0.3"
+__version__ = "1.0"
 
 
 INDENT = "  "

@@ -1,5 +1,9 @@
-Version 0.4 - IN DEVELOPMENT
+Version 1.0 - IN DEVELOPMENT
 ------------------------
+New features:
+* Python 3.x is supported
+* Python 2.x is no longer supported
+
 Enhancements:
 * Nicer pretty-printing of comments and PIs before and after the root
   element.

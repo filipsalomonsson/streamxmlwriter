@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """Test suite for Stream XML Writer module"""
 
-# Copyright (c) 2009-2010 Filip Salomonsson
+# Copyright (c) 2009-2020 Filip Salomonsson
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal

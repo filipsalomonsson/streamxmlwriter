@@ -11,7 +11,7 @@ The latest development version is available from the git repository [1].
 
 Comments and/or patches are always welcome.
 """
-# Copyright (c) 2009-2010 Filip Salomonsson
+# Copyright (c) 2009-2020 Filip Salomonsson
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal

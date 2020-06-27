@@ -44,8 +44,8 @@ def escape_attribute(value, encoding):
         value = value.replace("&", "&amp;")
     if "<" in value:
         value = value.replace("<", "&lt;")
-    if "\"" in value:
-        value = value.replace("\"", "&quot;")
+    if '"' in value:
+        value = value.replace('"', "&quot;")
     return value.encode(encoding, "xmlcharrefreplace")
 
 
@@ -67,6 +67,7 @@ def _nssplitname(name):
         return ("", name)
     return tuple(name[1:].split("}", 1))
 
+
 def _cname(name, nsmap, cnames):
     """Return a cname from its {ns}tag form."""
     if not isinstance(name, tuple):
@@ -80,13 +81,14 @@ def _cname(name, nsmap, cnames):
                 break
         else:
             uri = ""
-    prefix = nsmap.setdefault(uri, "ns" + str(len(nsmap)+1))
+    prefix = nsmap.setdefault(uri, "ns" + str(len(nsmap) + 1))
     if prefix:
         cname = prefix + ":" + ncname
     else:
         cname = ncname
     cnames[name] = cname
     return cname
+
 
 def sorter_factory(attrib_order):
     """Return a function that sorts a list of (key, value) pairs.
@@ -100,14 +102,16 @@ def sorter_factory(attrib_order):
     attrib_order = {}
     for tag, names in items:
         tag = _nssplitname(tag)
-        attrib_order[tag] = dict([(_nssplitname(name), n)
-                                  for (n, name) in enumerate(names)])
+        attrib_order[tag] = dict(
+            [(_nssplitname(name), n) for (n, name) in enumerate(names)]
+        )
     for tag, order in attrib_order.items():
         order.setdefault(None, len(order))
 
     def asort(pairs, tag):
         """Sort a list of ``(name, cname, value)`` tuples), using the
         custom sort order for the given `tag` name."""
+
         def key(item):
             """Return a sort key for a ``(name, cname, value)`` tuple."""
             (ncname, cname, value) = item
@@ -115,7 +119,9 @@ def sorter_factory(attrib_order):
                 return ncname
             keys = attrib_order[tag]
             return keys.get(ncname, keys[None]), ncname
+
         pairs.sort(key=key)
+
     return asort
 
 
@@ -142,8 +148,10 @@ class XMLSyntaxError(Exception):
 
 class XMLWriter(object):
     """Stream XML writer"""
-    def __init__(self, file, encoding="utf-8",
-                 pretty_print=False, sort=True, abbrev_empty=True):
+
+    def __init__(
+        self, file, encoding="utf-8", pretty_print=False, sort=True, abbrev_empty=True
+    ):
         """
         Create an `XMLWriter` that writes its output to `file`.
 
@@ -213,7 +221,7 @@ class XMLWriter(object):
         if self._tags:
             _, old_namespaces, _ = self._tags[-1]
         else:
-            old_namespaces = {'': ''}
+            old_namespaces = {"": ""}
         namespaces = old_namespaces.copy()
         if nsmap:
             self._new_namespaces.update(reversed(item) for item in nsmap.items())
@@ -232,27 +240,29 @@ class XMLWriter(object):
         # Make cnames for the attributes
         if attributes:
             kwargs.update(attributes)
-        attributes = [(_nssplitname(name), value)
-                      for (name, value) in kwargs.items()]
-        attributes = [(name, _cname(name, namespaces, cnames), value)
-                      for (name, value) in attributes]
+        attributes = [(_nssplitname(name), value) for (name, value) in kwargs.items()]
+        attributes = [
+            (name, _cname(name, namespaces, cnames), value)
+            for (name, value) in attributes
+        ]
 
         # Write namespace declarations for all new mappings
-        for (uri, prefix) in sorted(namespaces.items(),
-                                    key=lambda x: x[1]):
+        for (uri, prefix) in sorted(namespaces.items(), key=lambda x: x[1]):
             if uri not in old_namespaces or old_namespaces.get(uri) != prefix:
                 value = escape_attribute(uri, self.encoding)
                 if prefix:
-                    self.write(" xmlns:", bytes(prefix, self.encoding), "=\"", value, "\"")
+                    self.write(
+                        " xmlns:", bytes(prefix, self.encoding), '="', value, '"'
+                    )
                 else:
-                    self.write(" xmlns=\"", value, "\"")
+                    self.write(' xmlns="', value, '"')
 
         # Write the attributes
         if self._sort:
             self._sort(attributes, tag)
         for (name, cname, value) in attributes:
             value = escape_attribute(value, self.encoding)
-            self.write(" ", cname, "=\"", value, "\"")
+            self.write(" ", cname, '="', value, '"')
 
         self._new_namespaces = {}
         self._start_tag_open = True
@@ -270,8 +280,9 @@ class XMLWriter(object):
         if tag is not None:
             tag = _nssplitname(tag)
             if open_tag != tag:
-                raise XMLSyntaxError("Start and end tag mismatch: %s and /%s."
-                                     % (open_tag, tag))
+                raise XMLSyntaxError(
+                    "Start and end tag mismatch: %s and /%s." % (open_tag, tag)
+                )
         if self._start_tag_open:
             if self._abbrev_empty:
                 self.write(" />")
@@ -336,11 +347,13 @@ class XMLWriter(object):
     def declaration(self):
         """Write an XML declaration."""
         if self._started:
-            raise XMLSyntaxError("Can't write XML declaration after"
-                                 " root element has been started.")
+            raise XMLSyntaxError(
+                "Can't write XML declaration after root element has been started."
+            )
         if not self._wrote_declaration:
             self.pi("xml", "version='1.0' encoding='" + self.encoding + "'")
             self._wrote_declaration = True
+
     xml = declaration
 
     def _comment_or_pi(self, *data):
@@ -348,8 +361,9 @@ class XMLWriter(object):
         pretty-printing."""
         self._close_start()
         if self._pretty_print:
-            if ((self._tags and not self._wrote_data) or
-                (self._started and not self._tags)):
+            if (self._tags and not self._wrote_data) or (
+                self._started and not self._tags
+            ):
                 self.write("\n", INDENT * len(self._tags))
         self.write(*data)
         if self._pretty_print and not self._started:

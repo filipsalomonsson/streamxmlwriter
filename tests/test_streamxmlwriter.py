@@ -36,14 +36,14 @@ class TestXMLWriter(XMLWriterTestCase):
         w = XMLWriter(BytesIO())
         w.start("foo")
         w.end()
-        self.assertOutput(w, b'<foo />')
+        self.assertOutput(w, b"<foo />")
 
     def test_text_data(self):
         w = XMLWriter(BytesIO())
         w.start("foo")
         w.data("bar")
         w.end()
-        self.assertOutput(w, b'<foo>bar</foo>')
+        self.assertOutput(w, b"<foo>bar</foo>")
 
     def test_single_attribute(self):
         w = XMLWriter(BytesIO())
@@ -59,7 +59,7 @@ class TestXMLWriter(XMLWriterTestCase):
 
     def test_escape_attributes(self):
         w = XMLWriter(BytesIO())
-        w.start("foo", {"bar": "<>&\""})
+        w.start("foo", {"bar": '<>&"'})
         w.end()
         self.assertOutput(w, b'<foo bar="&lt;>&amp;&quot;" />')
 
@@ -68,18 +68,22 @@ class TestXMLWriter(XMLWriterTestCase):
         w.start("foo")
         w.data("<>&")
         w.end()
-        self.assertOutput(w, b'<foo>&lt;&gt;&amp;</foo>')
+        self.assertOutput(w, b"<foo>&lt;&gt;&amp;</foo>")
 
     def test_file_encoding(self):
-        ts = [({},
-               b"<foo>\xc3\xa5\xc3\xa4\xc3\xb6\xe2\x98\x83\xe2\x9d\xa4</foo>"),
-              ({"encoding": "us-ascii"},
-               b"<foo>&#229;&#228;&#246;&#9731;&#10084;</foo>"),
-              ({"encoding": "iso-8859-1"},
-               b"<?xml version='1.0' encoding='iso-8859-1'?>" \
-                   b"<foo>\xe5\xe4\xf6&#9731;&#10084;</foo>"),
-              ({"encoding": "utf-8"},
-               b"<foo>\xc3\xa5\xc3\xa4\xc3\xb6\xe2\x98\x83\xe2\x9d\xa4</foo>")]
+        ts = [
+            ({}, b"<foo>\xc3\xa5\xc3\xa4\xc3\xb6\xe2\x98\x83\xe2\x9d\xa4</foo>"),
+            ({"encoding": "us-ascii"}, b"<foo>&#229;&#228;&#246;&#9731;&#10084;</foo>"),
+            (
+                {"encoding": "iso-8859-1"},
+                b"<?xml version='1.0' encoding='iso-8859-1'?>"
+                b"<foo>\xe5\xe4\xf6&#9731;&#10084;</foo>",
+            ),
+            (
+                {"encoding": "utf-8"},
+                b"<foo>\xc3\xa5\xc3\xa4\xc3\xb6\xe2\x98\x83\xe2\x9d\xa4</foo>",
+            ),
+        ]
         for (kwargs, output) in ts:
             w = XMLWriter(BytesIO(), **kwargs)
             w.start("foo")
@@ -133,14 +137,17 @@ class TestPrettyPrinting(XMLWriterTestCase):
         w.start("b")
         w.start("c")
         w.close()
-        self.assertOutput(w, b"""\
+        self.assertOutput(
+            w,
+            b"""\
 <a>
   <b>foo</b>
   <b>bar</b>
   <b>
     <c />
   </b>
-</a>""")
+</a>""",
+        )
 
     def test_comment(self):
         w = XMLWriter(BytesIO(), pretty_print=True)
@@ -218,8 +225,9 @@ class TestNamespaces(XMLWriterTestCase):
         w.start_ns("", "")
         w.start("foo")
         w.close()
-        self.assertOutput(w, b'<foo xmlns="http://example.org/ns">'
-                          b'<foo xmlns="" /></foo>')
+        self.assertOutput(
+            w, b'<foo xmlns="http://example.org/ns">' b'<foo xmlns="" /></foo>'
+        )
 
     def test_prefix_rebinding(self):
         w = XMLWriter(BytesIO())
@@ -228,53 +236,68 @@ class TestNamespaces(XMLWriterTestCase):
         w.start_ns("a", "http://example.org/ns2")
         w.start("{http://example.org/ns2}foo")
         w.close()
-        self.assertOutput(w,b'<a:foo xmlns:a="http://example.org/ns">'
-                          b'<a:foo xmlns:a="http://example.org/ns2" />'
-                          b'</a:foo>')
+        self.assertOutput(
+            w,
+            b'<a:foo xmlns:a="http://example.org/ns">'
+            b'<a:foo xmlns:a="http://example.org/ns2" />'
+            b"</a:foo>",
+        )
 
     def test_attributes_same_local_name(self):
         w = XMLWriter(BytesIO())
         w.start_ns("a", "http://example.org/ns1")
         w.start_ns("b", "http://example.org/ns2")
         w.start("foo")
-        w.start("bar", {"{http://example.org/ns1}attr": "1",
-                        "{http://example.org/ns2}attr": "2"})
+        w.start(
+            "bar",
+            {"{http://example.org/ns1}attr": "1", "{http://example.org/ns2}attr": "2"},
+        )
         w.close()
-        self.assertOutput(w, b'<foo xmlns:a="http://example.org/ns1"'
-                          b' xmlns:b="http://example.org/ns2">'
-                          b'<bar a:attr="1" b:attr="2" />'
-                          b'</foo>')
+        self.assertOutput(
+            w,
+            b'<foo xmlns:a="http://example.org/ns1"'
+            b' xmlns:b="http://example.org/ns2">'
+            b'<bar a:attr="1" b:attr="2" />'
+            b"</foo>",
+        )
 
     def test_attributes_same_local_one_prefixed(self):
         w = XMLWriter(BytesIO())
         w.start_ns("a", "http://example.org/ns")
         w.start("foo")
-        w.start("bar", {"{http://example.org/ns}attr": "1",
-                        "attr": "2"})
+        w.start("bar", {"{http://example.org/ns}attr": "1", "attr": "2"})
         w.close()
-        self.assertOutput(w, b'<foo xmlns:a="http://example.org/ns">'
-                          b'<bar attr="2" a:attr="1" />'
-                          b'</foo>')
+        self.assertOutput(
+            w,
+            b'<foo xmlns:a="http://example.org/ns">'
+            b'<bar attr="2" a:attr="1" />'
+            b"</foo>",
+        )
 
     def test_attributes_same_local_one_prefixed_one_default(self):
         w = XMLWriter(BytesIO())
         w.start_ns("", "http://example.org/ns1")
         w.start_ns("a", "http://example.org/ns2")
         w.start("{http://example.org/ns1}foo")
-        w.start("{http://example.org/ns1}bar",
-                {"{http://example.org/ns1}attr": "1",
-                 "{http://example.org/ns2}attr": "2"})
+        w.start(
+            "{http://example.org/ns1}bar",
+            {"{http://example.org/ns1}attr": "1", "{http://example.org/ns2}attr": "2"},
+        )
         w.close()
-        self.assertOutput(w, b'<foo xmlns="http://example.org/ns1"'
-                          b' xmlns:a="http://example.org/ns2">'
-                          b'<bar attr="1" a:attr="2" />'
-                          b'</foo>')
+        self.assertOutput(
+            w,
+            b'<foo xmlns="http://example.org/ns1"'
+            b' xmlns:a="http://example.org/ns2">'
+            b'<bar attr="1" a:attr="2" />'
+            b"</foo>",
+        )
 
 
 class TestIterwrite(XMLWriterTestCase):
     def test_basic(self):
         from lxml import etree
         from io import BytesIO
+
         w = XMLWriter(BytesIO())
         xml = b"""\
 <!--comment before--><?pi before?><foo xmlns="http://example.org/ns1">
@@ -293,6 +316,7 @@ class TestIterwrite(XMLWriterTestCase):
     def test_chunked_text(self):
         from lxml import etree
         from io import BytesIO
+
         for padding in (16382, 32755):
             padding = b" " * padding
             w = XMLWriter(BytesIO())

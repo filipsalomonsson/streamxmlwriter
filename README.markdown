@@ -1,7 +1,7 @@
 Streamxmlwriter
 ===============
 
-![Build](https://img.shields.io/github/workflow/status/filipsalomonsson/streamxmlwriter/Python%20application)
+[![Build](https://img.shields.io/github/workflow/status/filipsalomonsson/streamxmlwriter/Python%20application)](https://github.com/filipsalomonsson/streamxmlwriter/actions?query=workflow%3A%22Python+application%22)
 [![PyPI](https://img.shields.io/pypi/v/streamxmlwriter.svg)](https://pypi.org/project/streamxmlwriter/)
 [![License](https://img.shields.io/github/license/filipsalomonsson/streamxmlwriter)](https://github.com/filipsalomonsson/streamxmlwriter/blob/master/COPYING)
 

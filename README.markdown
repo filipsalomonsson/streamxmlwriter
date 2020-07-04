@@ -1,6 +1,10 @@
 Streamxmlwriter
 ===============
 
+![Build](https://img.shields.io/github/workflow/status/filipsalomonsson/streamxmlwriter/Python%20application)
+[![PyPI](https://img.shields.io/pypi/v/streamxmlwriter.svg)](https://pypi.org/project/streamxmlwriter/)
+[![License](https://img.shields.io/github/license/filipsalomonsson/streamxmlwriter)](https://github.com/filipsalomonsson/streamxmlwriter/blob/master/COPYING)
+
 Streamxmlwriter is a simple python library for writing XML files.
 
 It allows you to generate XML documents without building the whole

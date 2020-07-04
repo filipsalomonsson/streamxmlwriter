@@ -18,25 +18,26 @@ attributes.
 Usage example
 -------------
 
-    >>> from io import BytesIO
-    >>> output = BytesIO()
+```python
+>>> from io import BytesIO
+>>> output = BytesIO()
 
-    >>> from streamxmlwriter import XMLWriter
-    >>> writer = XMLWriter(output, pretty_print=True)
+>>> from streamxmlwriter import XMLWriter
+>>> writer = XMLWriter(output, pretty_print=True)
 
-    >>> writer.start_ns("a", "http://example.org/ns")
-    >>> writer.start("foo", {"{http://example.org/ns}one": "1"}, two="2")
-    >>> writer.start("bar")
-    >>> writer.data("something")
-    >>> writer.end("bar")
-    >>> writer.comment("hello")
-    >>> writer.element("{http://example.org/ns}baz", data="whatnot", x="y")
-    >>> writer.start("empty")
-    >>> writer.close()
+>>> writer.start_ns("a", "http://example.org/ns")
+>>> writer.start("foo", {"{http://example.org/ns}one": "1"}, two="2")
+>>> writer.start("bar")
+>>> writer.data("something")
+>>> writer.end("bar")
+>>> writer.comment("hello")
+>>> writer.element("{http://example.org/ns}baz", data="whatnot", x="y")
+>>> writer.start("empty")
+>>> writer.close()
 
-    >>> output.getvalue()
-    b'<foo xmlns:a="http://example.org/ns" two="2" a:one="1">\n  <bar>something</bar>\n  <!--hello-->\n  <a:baz x="y">whatnot</a:baz>\n  <empty />\n</foo>'
-
+>>> output.getvalue()
+b'<foo xmlns:a="http://example.org/ns" two="2" a:one="1">\n  <bar>something</bar>\n  <!--hello-->\n  <a:baz x="y">whatnot</a:baz>\n  <empty />\n</foo>'
+```
 
 The API
 -------
@@ -127,11 +128,12 @@ placed last.)
 
 Example::
 
-    attrib_order = {
-        "person": ["id", "first_name", "last_name"],
-        "foo": ["id", None, "put_me_last"],
-    }
-
+```python
+attrib_order = {
+    "person": ["id", "first_name", "last_name"],
+    "foo": ["id", None, "put_me_last"],
+}
+```
 
 
 License
